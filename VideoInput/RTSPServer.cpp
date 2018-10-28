@@ -1,4 +1,5 @@
 #include "H264VideoServerMediaSubsession.hh"
+#include "VideoInput.hh"
 
 #include <stdio.h>
 #include <BasicUsageEnvironment.hh>
@@ -11,6 +12,12 @@ int main()
 {
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
 	UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
+
+	VideoInput* videoInput = VideoInput::createNew(*env, 1);
+	if (videoInput == NULL) {
+		printf("Video Input init failed %s: %d\n", __func__, __LINE__);
+		exit(1);
+	}
 	
 	// Create the RTSP server:
 	RTSPServer* rtspServer = NULL;
@@ -24,7 +31,7 @@ int main()
 	ServerMediaSession* sms_main =
 		ServerMediaSession::createNew(*env, "main", NULL, streamDescription, False);
 
-	sms_main->addSubsession(H264VideoServerMediaSubsession::createNew(sms_main->envir(), 1920*1080*3/2 + 128));
+	sms_main->addSubsession(H264VideoServerMediaSubsession::createNew(sms_main->envir(), *videoInput, 1920 * 1080 * 3 / 2 + 128));
 
 	rtspServer->addServerMediaSession(sms_main);
 	char *url = rtspServer->rtspURL(sms_main);

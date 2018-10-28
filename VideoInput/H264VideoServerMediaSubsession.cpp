@@ -4,18 +4,19 @@
 #include "H264VideoStreamFramer.hh"
 #include "H264VideoStreamDiscreteFramer.hh"
 #include "ByteStreamFileSource.hh"
+#include "VideoInput.hh"
 
 H264VideoServerMediaSubsession*
 H264VideoServerMediaSubsession
-::createNew(UsageEnvironment& env, unsigned estimatedBitrate) {
-	return new H264VideoServerMediaSubsession(env, estimatedBitrate);
+::createNew(UsageEnvironment& env, VideoInput& videoInput, unsigned estimatedBitrate) {
+	return new H264VideoServerMediaSubsession(env, videoInput, estimatedBitrate);
 }
 
 H264VideoServerMediaSubsession
-::H264VideoServerMediaSubsession(UsageEnvironment& env, unsigned estimatedBitrate)
+::H264VideoServerMediaSubsession(UsageEnvironment& env, VideoInput& videoInput, unsigned estimatedBitrate)
 	: OnDemandServerMediaSubsession(env, True/*reuse the first source*/),
-	  fAuxSDPLine(NULL), fDoneFlag(0), fDummyRTPSink(NULL)
-{
+	  fAuxSDPLine(NULL), fDoneFlag(0), fDummyRTPSink(NULL),
+	  fVideoInput(videoInput) {
 	fEstimatedKbps = (estimatedBitrate + 500)/1000;
 }
 
@@ -82,10 +83,9 @@ char const* H264VideoServerMediaSubsession::getAuxSDPLine(RTPSink* rtpSink, Fram
 
 FramedSource* H264VideoServerMediaSubsession::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
 	estBitrate = fEstimatedKbps;
-  H264VideoStreamSource* newSource = H264VideoStreamSource::createNew(envir());
 
 	// Create a framer for the Video Elementary Stream:
-	return H264VideoStreamDiscreteFramer::createNew(envir(), newSource);
+	return H264VideoStreamDiscreteFramer::createNew(envir(), fVideoInput.videoSource());
 }
 
 RTPSink* H264VideoServerMediaSubsession

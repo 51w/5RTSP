@@ -4,11 +4,12 @@
 #ifndef _ONDEMAND_SERVER_MEDIA_SUBSESSION_HH
 #include "OnDemandServerMediaSubsession.hh"
 #endif
+#include "VideoInput.hh"
 
 class H264VideoServerMediaSubsession: public OnDemandServerMediaSubsession {
 public:
   static H264VideoServerMediaSubsession*
-  createNew(UsageEnvironment& env, unsigned estimatedBitrate);
+  createNew(UsageEnvironment& env, VideoInput& videoInput, unsigned estimatedBitrate);
 
   // Used to implement "getAuxSDPLine()":
   void checkForAuxSDPLine1();
@@ -16,7 +17,7 @@ public:
 
 protected:
 
-  H264VideoServerMediaSubsession(UsageEnvironment& env, unsigned estimatedBitrate);
+  H264VideoServerMediaSubsession(UsageEnvironment& env, VideoInput& videoInput, unsigned estimatedBitrate);
       // called only by createNew()
   virtual ~H264VideoServerMediaSubsession();
   void setDoneFlag() { fDoneFlag = ~0; }
@@ -36,6 +37,7 @@ private:
   char* fAuxSDPLine;
   char fDoneFlag; // used when setting up "fAuxSDPLine"
   RTPSink* fDummyRTPSink; // ditto
+  VideoInput& fVideoInput;
 };
 
 #endif

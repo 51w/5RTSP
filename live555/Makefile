@@ -2,16 +2,16 @@
 
 OBJS_PATH = objs
 
-CROSS_COMPILE =
+CROSS_COMPILE = arm-hisiv300-linux-
 CXX   = $(CROSS_COMPILE)g++
 CC    = $(CROSS_COMPILE)gcc
 STRIP = $(CROSS_COMPILE)strip
 
-INC  += -I$(shell pwd)/live555/ubuntu16/include/BasicUsageEnvironment
-INC  += -I$(shell pwd)/live555/ubuntu16/include/groupsock
-INC  += -I$(shell pwd)/live555/ubuntu16/include/liveMedia
-INC  += -I$(shell pwd)/live555/ubuntu16/include/UsageEnvironment
-LIB   = -L$(shell pwd)/live555/ubuntu16/lib
+INC  += -I$(shell pwd)/live555/hisiv300/include/BasicUsageEnvironment
+INC  += -I$(shell pwd)/live555/hisiv300/include/groupsock
+INC  += -I$(shell pwd)/live555/hisiv300/include/liveMedia
+INC  += -I$(shell pwd)/live555/hisiv300/include/UsageEnvironment
+LIB   = -L$(shell pwd)/live555/hisiv300/lib
 LD_FLAGS  = -lpthread -lliveMedia -lBasicUsageEnvironment -lUsageEnvironment -lgroupsock
 
 O_FLAG   = -O2
